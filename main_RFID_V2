@@ -1,0 +1,47 @@
+extern ARM_DRIVER_USART Driver_USART2;
+void gestion_RFID (void const * argument);
+osThreadId ID_gestion_RFID;
+
+
+void init_UART2_RFID(void){
+	Driver_USART2.Initialize(NULL);
+	Driver_USART2.PowerControl(ARM_POWER_FULL);
+	Driver_USART2.Control(	ARM_USART_MODE_ASYNCHRONOUS |
+							ARM_USART_DATA_BITS_8		|
+							ARM_USART_STOP_BITS_1		|
+							ARM_USART_PARITY_NONE		|
+							ARM_USART_FLOW_CONTROL_NONE,
+							9600);
+	Driver_USART2.Control(ARM_USART_CONTROL_TX,1);
+	Driver_USART2.Control(ARM_USART_CONTROL_RX,1);
+}
+
+
+void gestion_RFID (void const * argument)
+{
+	char num_son = 0x02;	
+	int *ptr;
+	char buffer[50];
+	char badge1[50]={0x02,0x33,0x34,0x30,0x30,0x43,0x37,0x39,044,0x43,0x43,0x41,0x31,0x03}; // StartByte + (data + checksum)+ EndByte
+  init_UART2_RFID();
+	while(1)
+	{
+
+		Driver_USART1.Receive(buffer,14);
+		while(Driver_USART1.GetRxCount()<14); 
+		
+	
+		ptr=osMailAlloc(ID_BAL_DFPLAYER,osWaitForever);
+		*ptr=num_son;
+		osMailPut(ID_BAL_DFPLAYER,ptr);
+
+	}
+}
+
+int main()
+{
+	init_UART2_RFID();
+  ID_gestion_RFID		= osThreadCreate(osThread (gestion_RFID) 				,NULL);
+
+
+}
