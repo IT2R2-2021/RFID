@@ -19,21 +19,25 @@ void init_UART2_RFID(void){
 
 void gestion_RFID (void const * argument)
 {
-	char num_son = 0x02;	
-	int *ptr;
+char num_son = 0x02;	
+	int *ptr, i=0,verif=1;
 	char buffer[50];
-	char badge1[50]={0x02,0x33,0x34,0x30,0x30,0x43,0x37,0x39,044,0x43,0x43,0x41,0x31,0x03}; // StartByte + (data + checksum)+ EndByte
-  init_UART2_RFID();
+	char badge1[50]={0x02,0x33,0x34,0x30,0x30,0x43,0x37,0x39,044,0x43,0x43,0x41,0x32,0x03}; // StartByte + (data + checksum)+ EndByte
+  	init_UART1_RFID();
 	while(1)
 	{
-
+		verif=1;
 		Driver_USART1.Receive(buffer,14);
 		while(Driver_USART1.GetRxCount()<14); 
 		
-	
-		ptr=osMailAlloc(ID_BAL_DFPLAYER,osWaitForever);
-		*ptr=num_son;
-		osMailPut(ID_BAL_DFPLAYER,ptr);
+		for(i=0;i<7;i++) { 
+			if (buffer[i]!=badge1[i]){ verif = 0; }
+		}
+			if(verif == 1){
+				ptr=osMailAlloc(ID_BAL_DFPLAYER,osWaitForever);
+				*ptr=num_son;
+				osMailPut(ID_BAL_DFPLAYER,ptr);
+		 }
 
 	}
 }
