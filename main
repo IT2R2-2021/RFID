@@ -38,13 +38,13 @@ int main (void){
 	*/
 	
 	while(1){
-  Driver_USART1.Receive(buffer,14);
+  	Driver_USART1.Receive(buffer,14);
 	while(Driver_USART1.GetRxCount()<14); 
 	
 
 	GLCD_DrawString(1,1,buffer);	
 	
-  if(badge1[14]==buffer[14])
+  	if(badge1[14]==buffer[14])
 		{
 		
 		GLCD_DrawString(1,100,buffer);	
