@@ -30,14 +30,17 @@ char num_son = 0x02;
 		Driver_USART1.Receive(buffer,14);
 		while(Driver_USART1.GetRxCount()<14); 
 		
-		for(i=0;i<7;i++) { 
+		for(i=0;i<7;i++) 
+		{ 
 			if (buffer[i]!=badge1[i]){ verif = 0; }
+		
 		}
-			if(verif == 1){
+			if(verif == 1)
+			{
 				ptr=osMailAlloc(ID_BAL_DFPLAYER,osWaitForever);
 				*ptr=num_son;
 				osMailPut(ID_BAL_DFPLAYER,ptr);
-		 }
+		 	}
 
 	}
 }
